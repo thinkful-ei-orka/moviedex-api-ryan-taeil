@@ -1,6 +1,6 @@
 "use strict";
 
-// require('dotenv').config();
+require('dotenv').config();
 const express = require("express");
 const morgan = require("morgan");
 // const cors = require('cors');
@@ -8,20 +8,23 @@ const morgan = require("morgan");
 
 const app = express();
 
-// const API_TOKEN = process.env.API_TOKEN;
-
 const moviesData = require('./movies-data');
-
-function handleBearerToken(req, res, next) {
-
-}
 
 // app.use(cors());
 // app.use(helmet());
 app.use(morgan('common'));
-// app.use(handleBearerToken);
 
-app.get("/movie", (req, res) => {
+app.use(function validateBearerToken(req, res, next) {
+  const apiToken = process.env.API_TOKEN;
+  const authToken = req.get('Authorization');
+  if (!authToken || authToken.split(' ')[1] !== apiToken) {
+    return res.status(401).json({ error: 'Unauthorized request' });
+  }
+  // move to the next middleware
+  next();
+});
+
+app.get('/movie', (req, res) => {
   let responseData = moviesData;
   const { genre, country, avg_vote } = req.query;
 
