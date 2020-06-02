@@ -3,15 +3,15 @@
 require('dotenv').config();
 const express = require("express");
 const morgan = require("morgan");
-// const cors = require('cors');
-// const helmet = require('helmet');
+const cors = require('cors');
+const helmet = require('helmet');
 
 const app = express();
 
 const moviesData = require('./movies-data');
 
-// app.use(cors());
-// app.use(helmet());
+app.use(cors());
+app.use(helmet());
 app.use(morgan('common'));
 
 app.use(function validateBearerToken(req, res, next) {
@@ -48,7 +48,6 @@ app.get('/movie', (req, res) => {
 
   res.json(responseData);
 });
-
 
 app.listen(3000, () => {
   console.log("Express server is listening on port 3000!");
